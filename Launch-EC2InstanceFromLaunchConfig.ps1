@@ -38,7 +38,7 @@ function Launch-EC2InstanceFromLaunchConfig(
 function Launch-EC2InstanceFromASGroupTemplate([Parameter(Mandatory=$true)][string]$asgroupName) {
   $ErrorActionPreference = "Stop"
 
-  echo "Trying $asgroupName"
+  echo "Querying $asgroupName"
   $asGroup = Get-ASAutoScalingGroup -AutoScalingGroupName $asgroupName
   if (!($asGroup)) {
     write-error "Autoscaling Group not found by name: $asgroupName"
@@ -46,7 +46,10 @@ function Launch-EC2InstanceFromASGroupTemplate([Parameter(Mandatory=$true)][stri
   }
 
   echo "Launch configuration $($asGroup.LaunchConfigurationName)"
-  $instanceId = Launch-EC2InstanceFromLaunchConfig -launchConfigName $asGroup.LaunchConfigurationName -subnetId $asGroup.VPCZoneIdentifier
+  $instanceId = Launch-EC2InstanceFromLaunchConfig `
+    -launchConfigName $asGroup.LaunchConfigurationName `
+    -subnetId ($asGroup.VPCZoneIdentifier -split ',')[0]
+
   if (!($instanceId)) {
     write-error "Instance was not launched"
     return
