@@ -6,7 +6,7 @@ The AWS name of the instance, e.g. 'i-ab123456'
 .PARAMETER decryptPw
 Optional. If set this will attempt to decrypt the password and copy it to the clipboard.
 The .PEM private key is necessary to decrypt the password. Specify this full file path
-in $Global:ec2pw so that this can occur automatically. If the variable is null, you
+in $Global:ec2pem so that this can occur automatically. If the variable is null, you
 will be prompted to enter it.
 .PARAMETER privateIp
 Optional. If set, indicates it should try to connect to the instance using the
@@ -17,7 +17,8 @@ Connect via private IP, and decrypt the password and copy it to the clipboard
 or the more verbose version of the same thing
     rdpe -instanceId i-ab123456 -privateIp -decryptPw
 #>
-function RDP-EC2Instance($instanceId, [switch]$decryptPw, [switch]$privateIp) {
+
+function RDP-EC2Instance([string]$instanceId, [switch]$decryptPw, [switch]$privateIp) {
     # Of course this has a dependency on the AWSPowerShell module
     if (!(Get-Module -Name "AWSPowerShell")) {
         echo "AWSPowerShell module not loaded! Download and install from:"
@@ -94,4 +95,3 @@ function RDP-EC2Instance($instanceId, [switch]$decryptPw, [switch]$privateIp) {
     mstsc /v:$ipaddr
 }
 set-alias rdpe RDP-EC2Instance
-
