@@ -1,8 +1,8 @@
-## aws-powershell-helpers
+# aws-powershell-helpers
 
 This is my collection of Powershell functions that are useful when administering Amazon Web Services in a Windows environment.
 
-# RDP-EC2Instance
+### RDP-EC2Instance
 
 Given the name of the instance, this will initiate an RDP session. If the instance hasn't fully launched yet and isn't ready to be connected to, this will continue to test the network connection until it is available and then connect.
 
@@ -16,7 +16,7 @@ It can also automatically decrypt the Windows password given the `-decryptPw` sw
 
 ```RDP-EC2Instance i-ab123456 -decryptPw```
 
-# List-EC2InstancesByName
+### List-EC2InstancesByName
 
 Used often in conjuction with RDP-EC2Instance, if you know the name of the instance you want to RDP into, you can enter part of that name here and this will list InstanceIds matching that name, along with VPC and tag info. Then you can use the InstanceId shown here for RDP.
 
@@ -24,7 +24,7 @@ Used often in conjuction with RDP-EC2Instance, if you know the name of the insta
 
 Will list any instances that have "Website" in the name.
 
-# Launch-EC2InstanceFromASGroupConfig
+### Launch-EC2InstanceFromASGroupConfig
 
 Ever want to launch an instance that is configured exactly matching an existing autoscaling launch configuration but launch it for testing, outside of the ELB or ASGroup?  This will do just that, and is invoked as simply as:
 
@@ -36,7 +36,7 @@ Optionally, if you want to use the subnet and tags from the autoscaling group, b
 
 ```Launch-EC2InstanceFromASGroupConfig MyASGName -overrideLaunchConfigName SomeDifferentLCName```
 
-# Launch-EC2InstanceFromLaunchConfig
+### Launch-EC2InstanceFromLaunchConfig
 
 If you want to launch from a Launch Configuration directly, you can use this. You must pass a subnet. This will not name the instance or propagate any tags.
 
