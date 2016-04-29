@@ -26,7 +26,7 @@ function Audit-UnusedEbsVolumes() {
             $amiId = $matches[0]
             $ami = Get-EC2Image -ImageId $amiId
 
-            $ebsInfo = New-Object –TypeName PSObject –Prop @{
+            $ebsInfo = [pscustomobject] @{
                 VolumeId = $volume.VolumeId;
                 CreatedOn = get-date($volume.CreateTime) -format "yyyy-MM-dd";
                 Status = $volume.Status;
