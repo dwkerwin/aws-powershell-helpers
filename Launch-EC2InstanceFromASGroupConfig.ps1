@@ -3,6 +3,10 @@
 Launches an AWS EC2 instance with the properties of the given autoscaling group
 .PARAMETER asgroupName
 The name of the autoscaling group to inherit properties from
+.PARAMETER overrideLaunchConfig
+Optionally, provide a different launch config rather than using the LC from the ASG
+.PARAMETER overrideInstanceType
+Optionally, provide a different instance type rather than using the type from the LC
 .EXAMPLE
 Launch-EC2InstanceFromASGroupConfig MyASGName
 Launch-EC2InstanceFromASGroupConfig MyASGName -overrideLaunchConfigName SomeDifferentLCName
@@ -16,7 +20,8 @@ param
 
 function Launch-EC2InstanceFromASGroupConfig(
   [Parameter(Mandatory=$true)][string] $asgroupName,
-  [string] $overrideLaunchConfigName
+  [string] $overrideLaunchConfigName,
+  [string] $overrideInstanceType
   ) {
   $ErrorActionPreference = "Stop"
 
@@ -36,7 +41,8 @@ function Launch-EC2InstanceFromASGroupConfig(
   echo "Launch configuration $lcName"
   $instanceId = Launch-EC2InstanceFromLaunchConfig `
     -launchConfigName $lcName `
-    -subnetId ($asGroup.VPCZoneIdentifier -split ',')[0]
+    -subnetId ($asGroup.VPCZoneIdentifier -split ',')[0] `
+    -overrideInstanceType $overrideInstanceType
 
   if (!($instanceId)) {
     write-error "Instance was not launched"
@@ -73,6 +79,7 @@ function Launch-EC2InstanceFromLaunchConfig(
   $launchConfig = Get-ASLaunchConfiguration -LaunchConfigurationName $launchConfigName
 
   if ($overrideInstanceType) {
+    "Using instance type $overrideInstanceType"
     $instanceType = $overrideInstanceType
   } else {
     $instanceType = $launchConfig.InstanceType
