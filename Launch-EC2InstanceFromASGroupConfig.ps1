@@ -49,6 +49,8 @@ function Launch-EC2InstanceFromASGroupConfig(
     return
   }
 
+  "Launched $instanceId"
+
   # apply any PropagateAtLaunch tags to the instance just as the autoscaling group would have
   $propagateTags = @()
   $asGroup.Tags | % {
@@ -63,9 +65,14 @@ function Launch-EC2InstanceFromASGroupConfig(
     $propagateTags += $tag
   }
 
+  "Tagging $instanceId with:"
+  $propagateTags | % {
+    "$($_.Key): $($_.Value)"
+  }
+
   $instanceId | New-EC2Tag -Tags $propagateTags
 
-  echo "Tagged $instanceId as '$instanceName' and applied $($propagateTags.Length - 1) other tags."
+  echo "Launched $instanceId as '$instanceName'"
 }
 
 function Launch-EC2InstanceFromLaunchConfig(
