@@ -93,5 +93,20 @@ function RDP-EC2Instance([string]$instanceId, [switch]$decryptPw, [switch]$priva
     # initiate the RDP connection
     # handy tip - use the down arrow key to enter a new username such as Administrator
     mstsc /v:$ipaddr
+
+    # if a pw was copied to the clipboard, give the user a few seconds to use it, then wipe it
+    if ($pw) {
+        $countdownSeconds = 10
+        for ($i = $countdownSeconds; $i -gt 0; $i--) 
+        {
+          $statusMsg = "Will erase clipboard value in $i seconds"
+          write-progress -id 1 -activity $statusMsg -status "Sleeping" -percentComplete (($countdownSeconds-$i+1)/$countdownSeconds*100) 
+          sleep 1;  
+        }
+
+        # clear clipboard
+        "" | clip
+    }
 }
+
 set-alias rdpe RDP-EC2Instance
