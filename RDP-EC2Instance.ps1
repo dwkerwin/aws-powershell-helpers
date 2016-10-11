@@ -80,15 +80,6 @@ function RDP-EC2Instance([string]$instanceId, [switch]$decryptPw, [switch]$priva
             $pw = $Global:ec2pw
         }
     }
-    if ($pw) {
-        # copy the password to the clipboard so it can be easily pasted into the RDP window
-        $pw | clip
-        echo "Password copied to clipboard."
-        if ($pemViaUserInput) {
-            $Global:ec2pem = $pemPath
-            echo "Stored .PEM file path in `$Global:ec2pem so you don't have to be prompted in the future."
-        }
-    }
 
     # initiate the RDP connection
     # handy tip - use the down arrow key to enter a new username such as Administrator
@@ -96,12 +87,24 @@ function RDP-EC2Instance([string]$instanceId, [switch]$decryptPw, [switch]$priva
 
     # if a pw was copied to the clipboard, give the user a few seconds to use it, then wipe it
     if ($pw) {
+        # copy the password to the clipboard so it can be easily pasted into the RDP window
+        $pw | clip
+
+        if ($pemViaUserInput) {
+            $Global:ec2pem = $pemPath
+            echo "Stored .PEM file path in `$Global:ec2pem so you don't have to be prompted in the future."
+        }
+
         $countdownSeconds = 10
         for ($i = $countdownSeconds; $i -gt 0; $i--) 
         {
-          $statusMsg = "Will erase clipboard value in $i seconds"
-          write-progress -id 1 -activity $statusMsg -status "Sleeping" -percentComplete (($countdownSeconds-$i+1)/$countdownSeconds*100) 
-          sleep 1;  
+          $statusMsg = "Will remove password from clipboard in $i seconds"
+          write-progress `
+            -id 1 `
+            -activity "Copied password to clipboard" `
+            -status $statusMsg `
+            -percentComplete (($countdownSeconds-$i+1)/$countdownSeconds*100) 
+          sleep 1
         }
 
         # clear clipboard
